@@ -22,9 +22,35 @@ const createDeck = () => {
             deck.push( spe + tipe);
         }
     }
-    console.log(deck);
+
     deck = _.shuffle (deck);
     console.log(deck)
+    return deck;
 }
 
 createDeck();
+
+const askCard = () => {
+
+    if (deck.length === 0 ) {
+        throw 'No more cards in the deck';
+
+    }
+
+    const card = deck.pop();
+    console.log(deck);
+    console.log(card);
+    return card;
+}
+
+const cardValue = (card) => {
+
+    const value = card.substring(0, card.length -1);
+    return (isNaN (value ) ) ?
+            (value === 'A') ? 11: 10
+            : value *1;
+
+}
+
+const value = cardValue (askCard());
+console.log([value]);
