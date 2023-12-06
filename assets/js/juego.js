@@ -82,6 +82,19 @@ const pcTurn = (minPoints) => {
     }
 
     } while ( (pcPoints < minPoints) && (minPoints <= 21));
+
+    setTimeout(() => {
+        
+    if(pcPoints === minPoints) {
+        alert('House wins');
+    }else if ( minPoints > 21) {
+        alert('House wins');
+    }else if (pcPoints >21 ){
+        alert('Player wins');
+    }else {
+        alert('House wins')
+    }
+    }, 10);
 } 
 
 const value = cardValue (askCard());
@@ -121,4 +134,23 @@ btnStop.addEventListener('click', () =>{
     pcTurn(playerPoints);
 
 
+})
+
+btnNew.addEventListener('click', () => {
+
+    console.clear();
+    deck = [];
+    deck = createDeck();
+
+    playerPoints = 0;
+    pcPoints = 0;
+
+    HTMlpoints[0].innerText = 0;
+    HTMlpoints[1].innerText = 0;
+
+    divComputerCards.innerHTML = ' ';
+    divPlayerCards.innerHTML = ' ';
+
+    btnAsk.disabled = false;
+    btnStop.disabled = false;
 })
