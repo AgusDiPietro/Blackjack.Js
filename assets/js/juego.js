@@ -6,17 +6,25 @@
 */
 
 let deck = [];
-const tipos = ['C', 'D', 'H', 'S'];
+const tipes = ['C', 'D', 'H', 'S'];
+const specials = ['A', 'J', 'Q', 'K'];
 
-const crearDeck = () => {
+const createDeck = () => {
     
     for( let i = 2; i <= 10; i++ ) {
-        for (let tipo of tipos) {
-            deck.push( i + tipo ); 
+        for (let tipe of tipes) {
+            deck.push( i + tipe ); 
         }
-        
+    }
+
+    for (let tipe of tipes) {
+        for( let spe of specials ) {
+            deck.push( spe + tipe);
+        }
     }
     console.log(deck);
+    deck = _.shuffle (deck);
+    console.log(deck)
 }
 
-crearDeck();
+createDeck();
