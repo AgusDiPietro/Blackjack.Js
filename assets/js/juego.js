@@ -9,6 +9,16 @@ let deck = [];
 const tipes = ['C', 'D', 'H', 'S'];
 const specials = ['A', 'J', 'Q', 'K'];
 
+let playerPoints = 0,
+    pcPoints = 0;
+
+//Ref HTMl
+const btnAsk = document.querySelector('#btnAsk');
+const btnStop = document.querySelector('#btnStop');
+const btnNew = document.querySelector('#btnNew');
+
+const HTMlpoints = document.querySelectorAll('small')
+
 const createDeck = () => {
     
     for( let i = 2; i <= 10; i++ ) {
@@ -54,3 +64,16 @@ const cardValue = (card) => {
 
 const value = cardValue (askCard());
 console.log([value]);
+
+//Events
+btnAsk.addEventListener('click', () => {
+
+    const card = askCard();
+
+    playerPoints = playerPoints + cardValue(card);
+    HTMlpoints[0].innerText = playerPoints;
+
+    
+
+
+})
