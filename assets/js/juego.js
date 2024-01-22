@@ -1,25 +1,38 @@
 
-(() => {
+const myModule = (() => {
     'use strict'
 
     let deck = [];
-    const tipes = ['C', 'D', 'H', 'S'];
-    const specials = ['A', 'J', 'Q', 'K'];
+    const tipes = ['C', 'D', 'H', 'S'],
+         specials = ['A', 'J', 'Q', 'K'];
 
-    let playerPoints = 0,
-        pcPoints = 0;
+    let playerPoints = [];
 
     //Ref HTMl
-    const btnAsk = document.querySelector('#btnAsk');
-    const btnStop = document.querySelector('#btnStop');
-    const btnNew = document.querySelector('#btnNew');
+    const btnAsk = document.querySelector('#btnAsk'),
+          btnStop = document.querySelector('#btnStop'),
+          btnNew = document.querySelector('#btnNew');
 
-    const divComputerCards = document.querySelector('#computer-cards');
-    const divPlayerCards = document.querySelector('#player-cards');
-    const HTMlpoints = document.querySelectorAll('small');
+    const divPlayersCards = document.querySelectorAll('.divCarts')
+          HTMlpoints = document.querySelectorAll('small');
+
+    const startGame = (numPlayers = 2) => {
+            deck = createDeck();
+            for( let i = 0; i< numPlayers; i++){
+                playerPoints.push(0);
+            }
+
+            pointsHTML.forEach(element => element.innerText = 0 );
+            divPlayersCards.forEach(element => element.innerHTML = ' ');
+
+
+            btnAsk.disabled = false;
+            btnStop.disabled = false;
+        }
 
     const createDeck = () => {
         
+        deck = [];
         for( let i = 2; i <= 10; i++ ) {
             for (let tipe of tipes) {
                 deck.push( i + tipe ); 
@@ -31,22 +44,15 @@
                 deck.push( spe + tipe);
             }
         }
-        deck = _.shuffle (deck);
-        return deck;
+        return _.shuffle (deck);
+
     }
-
-    createDeck();
-
+    
     const askCard = () => {
-
         if (deck.length === 0 ) {
             throw 'No more cards in the deck';
         }
-        const card = deck.pop();
-        console.log(deck);
-        console.log(card);
-        return card;
-    }
+        return deck.pop();
 
     const cardValue = (card) => {
 
@@ -56,41 +62,51 @@
                 : value *1;
     }
 
-    //Pc turn
-    const pcTurn = (minPoints) => {
+    const accumulatePoints = (card, turn) => {
+        playerPoints [turn] = playerPoints[turn] + cardValue(card);
+        HTMlpoints[turn].innerText = playerPoints[turn];
+        return playerPoints[turn];
+    }
+   
+    const createCard = (card, turn) => {
 
-        do{
-
-        const card = askCard();
-
-        pcPoints = pcPoints + cardValue(card);
-        HTMlpoints[1].innerText = pcPoints;
-
-        // <!-- <img class="carta" src="assets/cartas/cartas/2S.png"> -->
         const cardImage = document.createElement('img');
         cardImage.src = `assets/cartas/cartas/${card}.png`;
         cardImage.classList.add('card');
+        divPlayersCards[turn].append(cardImage);
+    }
+ 
+    const detWinner = () => {
 
-        divComputerCards.append(cardImage);
-
-        if(playerPoints > 21) {
-            break;
-        }
-
-        } while ( (pcPoints < minPoints) && (minPoints <= 21));
+        const[minPoints, pcPoints] = playerPoints;
 
         setTimeout(() => {
             
-        if(pcPoints === minPoints) {
-            alert('House wins');
-        }else if ( minPoints > 21) {
-            alert('House wins');
-        }else if (pcPoints >21 ){
-            alert('Player wins');
-        }else {
-            alert('House wins')
-        }
-        }, 10);
+            if(pcPoints === minPoints) {
+                alert('House wins');
+            }else if ( minPoints > 21) {
+                alert('House wins');
+            }else if (pcPoints >21 ){
+                alert('Player wins');
+            }else {
+                alert('House wins')
+            }
+            }, 100);
+
+    }
+
+    //Pc turn
+    const pcTurn = (minPoints) => {
+
+        let pcPoints = 0;
+        do{
+
+        const card = askCard();
+        pcPoints = accumulatePoints(card,playerPoints.length - 1);
+        createCard(card, playerPoints.length -1);
+        } while ( (pcPoints < minPoints) && (minPoints <= 21));
+
+        detWinner();
     } 
 
     const value = cardValue (askCard());
@@ -100,16 +116,9 @@
     btnAsk.addEventListener('click', () => {
 
         const card = askCard();
+        const playerPoints = accumulatePoints(card, 0);
 
-        playerPoints = playerPoints + cardValue(card);
-        HTMlpoints[0].innerText = playerPoints;
-
-        // <!-- <img class="carta" src="assets/cartas/cartas/2S.png"> -->
-        const cardImage = document.createElement('img');
-        cardImage.src = `assets/cartas/cartas/${card}.png`;
-        cardImage.classList.add('card');
-
-        divPlayerCards.append(cardImage);
+        createCard(card, 0);
 
         if(playerPoints > 21) {
             console.warn('You lost');
@@ -126,29 +135,18 @@
     btnStop.addEventListener('click', () =>{
         btnAsk.disabled = true;
         btnStop.disabled = true;
-
-        pcTurn(playerPoints);
-
-
+        pcTurn(playerPoints[0]);
     })
 
     btnNew.addEventListener('click', () => {
-
-        console.clear();
-        deck = [];
-        deck = createDeck();
-
-        playerPoints = 0;
-        pcPoints = 0;
-
-        HTMlpoints[0].innerText = 0;
-        HTMlpoints[1].innerText = 0;
-
-        divComputerCards.innerHTML = ' ';
-        divPlayerCards.innerHTML = ' ';
-
-        btnAsk.disabled = false;
-        btnStop.disabled = false;
+        startGame();
     })
+    }
+
+    //Public
+    return {
+        newGame: startGame
+
+    };
 
 })();
